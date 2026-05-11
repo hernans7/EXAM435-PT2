@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Course Recommender</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #2d6cdf;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1f4fbf;
+    }
+
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef3ff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎓 AI Course Recommender</h1>
+
+    <p>Select your career goal:</p>
+
+    <select id="goal">
+      <option value="mis">Management Information Systems</option>
+      <option value="data">Data Analytics</option>
+      <option value="marketing">Marketing</option>
+      <option value="finance">Finance</option>
+    </select>
+
+    <button onclick="recommend()">Get Recommendation</button>
+
+    <div class="output" id="output">
+      Your recommendations will appear here.
+    </div>
+  </div>
+
+  <script>
+    function recommend() {
+      let goal = document.getElementById("goal").value;
+      let output = "";
+
+      if (goal === "mis") {
+        output = `
+        Recommended Courses:
+        - MIS 320 (Database Systems)
+        - MIS 411 (Systems Analysis)
+        - MIS 435 (AI in Business)
+
+        Why: These build your technical + business systems skills.
+        `;
+      }
+
+      if (goal === "data") {
+        output = `
+        Recommended Courses:
+        - STAT 301 (Statistics)
+        - MIS 381 (Data Analytics)
+        - MIS 420 (Machine Learning Basics)
+
+        Why: Focus on analytics, modeling, and prediction systems.
+        `;
+      }
+
+      if (goal === "marketing") {
+        output = `
+        Recommended Courses:
+        - MKTG 361 (Consumer Behavior)
+        - MIS 388 (Digital Marketing Analytics)
+        - COMM 322 (Communication Strategy)
+
+        Why: Combines data + human behavior + messaging.
+        `;
+      }
+
+      if (goal === "finance") {
+        output = `
+        Recommended Courses:
+        - FIN 341 (Corporate Finance)
+        - MIS 381 (Data Analytics)
+        - ECON 303 (Econometrics)
+
+        Why: Builds quantitative + financial decision skills.
+        `;
+      }
+
+      document.getElementById("output").innerText = output;
+    }
+  </script>
+</body>
+</html>
