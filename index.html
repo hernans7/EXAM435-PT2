@@ -1,127 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>AI Course Recommender</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-    }
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.stats.proportion import proportions_ztest
 
-    .container {
-      max-width: 700px;
-      margin: 60px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+np.random.seed(42)
 
-    h1 {
-      text-align: center;
-    }
+# -------------------------
+# 1. Setup experiment
+# -------------------------
+n_students = 1000
+n_control = n_students // 2
+n_treatment = n_students // 2
 
-    select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
+# True probabilities (based on your scenario)
+p_control = 0.28   # Paragraph format
+p_treatment = 0.36 # Bullet point format
 
-    button {
-      background: #2d6cdf;
-      color: white;
-      cursor: pointer;
-    }
+# -------------------------
+# 2. Simulate enrollments
+# -------------------------
+control_enrollments = np.random.binomial(1, p_control, n_control)
+treatment_enrollments = np.random.binomial(1, p_treatment, n_treatment)
 
-    button:hover {
-      background: #1f4fbf;
-    }
+# -------------------------
+# 3. Compute metrics
+# -------------------------
+control_rate = control_enrollments.mean()
+treatment_rate = treatment_enrollments.mean()
 
-    .output {
-      margin-top: 20px;
-      padding: 15px;
-      background: #eef3ff;
-      border-radius: 8px;
-    }
-  </style>
-</head>
+lift = treatment_rate - control_rate
 
-<body>
-  <div class="container">
-    <h1>🎓 AI Course Recommender</h1>
+print("Control Group Enrollment Rate:", round(control_rate * 100, 2), "%")
+print("Treatment Group Enrollment Rate:", round(treatment_rate * 100, 2), "%")
+print("Lift:", round(lift * 100, 2), "percentage points")
 
-    <p>Select your career goal:</p>
+# -------------------------
+# 4. Statistical significance test
+# -------------------------
+count = np.array([control_enrollments.sum(), treatment_enrollments.sum()])
+nobs = np.array([n_control, n_treatment])
 
-    <select id="goal">
-      <option value="mis">Management Information Systems</option>
-      <option value="data">Data Analytics</option>
-      <option value="marketing">Marketing</option>
-      <option value="finance">Finance</option>
-    </select>
+stat, p_value = proportions_ztest(count, nobs)
 
-    <button onclick="recommend()">Get Recommendation</button>
+print("p-value:", p_value)
 
-    <div class="output" id="output">
-      Your recommendations will appear here.
-    </div>
-  </div>
+if p_value < 0.05:
+    print("Result: Statistically significant difference")
+else:
+    print("Result: Not statistically significant")
 
-  <script>
-    function recommend() {
-      let goal = document.getElementById("goal").value;
-      let output = "";
+# -------------------------
+# 5. Visualization
+# -------------------------
+labels = ['Control (Paragraph)', 'Treatment (Bullet Points)']
+rates = [control_rate, treatment_rate]
 
-      if (goal === "mis") {
-        output = `
-        Recommended Courses:
-        - MIS 320 (Database Systems)
-        - MIS 411 (Systems Analysis)
-        - MIS 435 (AI in Business)
-
-        Why: These build your technical + business systems skills.
-        `;
-      }
-
-      if (goal === "data") {
-        output = `
-        Recommended Courses:
-        - STAT 301 (Statistics)
-        - MIS 381 (Data Analytics)
-        - MIS 420 (Machine Learning Basics)
-
-        Why: Focus on analytics, modeling, and prediction systems.
-        `;
-      }
-
-      if (goal === "marketing") {
-        output = `
-        Recommended Courses:
-        - MKTG 361 (Consumer Behavior)
-        - MIS 388 (Digital Marketing Analytics)
-        - COMM 322 (Communication Strategy)
-
-        Why: Combines data + human behavior + messaging.
-        `;
-      }
-
-      if (goal === "finance") {
-        output = `
-        Recommended Courses:
-        - FIN 341 (Corporate Finance)
-        - MIS 381 (Data Analytics)
-        - ECON 303 (Econometrics)
-
-        Why: Builds quantitative + financial decision skills.
-        `;
-      }
-
-      document.getElementById("output").innerText = output;
-    }
-  </script>
-</body>
-</html>
+plt.bar(labels, rates)
+plt.title("A/B Test: Course Description Format vs Enrollment Rate")
+plt.ylabel("Enrollment Rate")
+plt.ylim(0, 1)
+plt.show()
